@@ -31,6 +31,9 @@ def population():
 
 #
 # GA functions
+# functions to implement:
+# fitness - determine the fitness of an individual.
+# average_fitness - determine the average fitness of the pop.
 
 if __name__ == "__main__":
 	pop = population()
