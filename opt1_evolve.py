@@ -9,11 +9,14 @@ from functools import reduce
 #
 # Global variables
 
-INDIVIDUAL_LENGHT = 4 #number of bites to represent the individual.
-POP_SIZE = 10 #number of individuals in the pop.
+INDIVIDUAL_LENGHT = 16 #number of bites to represent the individual.
+POP_SIZE = 5000 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
+
+BEST_X = 0
+BEST_FITNESS = 0
 
 
 
@@ -51,8 +54,24 @@ def calculate_average_fitness(population):
 	return fitness_sum / (len(population) * 1.0)
 
 def evolve(population):
+	global BEST_FITNESS 
+	global BEST_X
+
 	graded = [ (calculate_fitness(x), x) for x in population]
-	graded = [ x[1] for x in sorted(graded)]
+
+	sorted_graded = sorted(graded)
+
+	#always keeps traks of the best result to the fitness function.
+	pop_leader = sorted_graded[-1]
+
+	if pop_leader[0] > BEST_FITNESS:
+		BEST_FITNESS = pop_leader[0]
+		BEST_X = int(pop_leader[1], 2)
+
+
+
+	graded = [ x[1] for x in sorted_graded]
+
 
 	retain_length = int(len(graded)*SELECTED)
 	parents = graded[-retain_length:] #pick X% of the best in the population
@@ -89,14 +108,11 @@ def evolve(population):
 
 
 if __name__ == "__main__":
+	p = generate_population(POP_SIZE)
+	p = evolve(p)
 
-	#generate initial population
-	pop = generate_population(POP_SIZE)
-	print pop
-
-	#evolve population
-	newpop = evolve(pop)
-	print newpop
+	print BEST_X
+	print BEST_FITNESS
 
 
 
