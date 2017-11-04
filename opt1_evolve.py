@@ -5,6 +5,7 @@ Copyright (c) 2017 Theodoro L. Mota
 from random import randint, random, shuffle
 from operator import add
 from functools import reduce
+import struct
 
 #
 # Global variables
@@ -38,6 +39,11 @@ def mutate_individual(individual):
 	shuffle(l)
 
 	return ''.join(l)
+
+#should receive a 32 bit string and returns a float number
+def bin_to_float(binary):
+	i = int('01000000001110000101000111101100', 2)
+	return struct.unpack('f', struct.pack('I', i))[0]
 
 
 #
@@ -108,11 +114,16 @@ def evolve(population):
 
 
 if __name__ == "__main__":
+	i = int('01000000001110000101000111101100', 2)
+	f = struct.unpack('f', struct.pack('I', i))[0]
+
+
+
 	p = generate_population(POP_SIZE)
 	p = evolve(p)
 
-	print BEST_X
-	print BEST_FITNESS
+	#print BEST_X
+	#print BEST_FITNESS
 
 
 
