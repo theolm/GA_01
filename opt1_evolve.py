@@ -42,7 +42,7 @@ def mutate_individual(individual):
 
 #should receive a 32 bit string and returns a float number
 def bin_to_float(binary):
-	i = int('01000000001110000101000111101100', 2)
+	i = int(binary, 2)
 	return struct.unpack('f', struct.pack('I', i))[0]
 
 
