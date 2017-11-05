@@ -25,14 +25,13 @@ BEST_FITNESS = 0
 # Helper functions
 
 def individual():
-    'Create a member of the population.'
-
-    temp = ''
-
-    for x in xrange(INDIVIDUAL_LENGHT):
+	"Create a individual"
+	
+	temp = ''
+	for x in xrange(INDIVIDUAL_LENGHT):
     	temp += str(randint(0,1))
-
-    return temp
+	
+	return temp
 
 def mutate_individual(individual):
 	l = list(individual)
@@ -50,7 +49,7 @@ def bin_to_float(binary):
 # GA functions
 
 def generate_population(population_size):
-    return [ individual() for x in xrange(population_size) ]
+	return [ individual() for x in xrange(population_size) ]
 
 def calculate_fitness(individual):
 	return int(individual, 2) ** 2 # x^2 -> here goes the function to optimize 
@@ -95,18 +94,18 @@ def evolve(population):
 
 	parents_length = len(parents)
 	offspring_lenght = len(population) - parents_length
-	offspings = []
+	offsprings = []
 
-	while len(offspings) < offspring_lenght:
+	while len(offsprings) < offspring_lenght:
 		male = randint(0, parents_length-1)
 		female = randint(0, parents_length-1)
 		if male != female:
 			male = parents[male]
 			female = parents[female]
 			child = male[:INDIVIDUAL_LENGHT] + female[INDIVIDUAL_LENGHT:]
-			offspings.append(child)
+			offsprings.append(child)
 
-	parents.extend(offspings)
+	parents.extend(offsprings)
 	return parents
 
 # functions to implement:
