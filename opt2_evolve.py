@@ -19,11 +19,8 @@ import struct
 #
 # Global variables
 
-# bitarray codification of X1 and X2
-# S III FFFFFFFFFF + S III FFFFFFFFFF = 28bits
-
 INDIVIDUAL_LENGHT = 32 #number of bites to represent the individual.
-POP_SIZE = 100 #number of individuals in the pop.
+POP_SIZE = 500 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
@@ -63,8 +60,8 @@ def get_x1_and_x2(binary):
 	bin1 = binary[:(len(binary)/2)]
 	bin2 = binary[(len(binary)/2):]
 
-	x1 = float(int(bin1,2) - 32767.5)/10000
-	x2 = float(int(bin2,2) - 32767.5)/10000
+	x1 = float(int(bin1,2) -1 - 32767)/10000
+	x2 = float(int(bin2,2) -1 - 32767)/10000
 
 	pair = (x1,x2)
 	return pair
@@ -81,7 +78,7 @@ def calculate_fitness(individual):
 	x2 = xx[1]
 
 	ans = ((4 - (2.1 * (x1 ** 2)) + ((x1 ** 4)/3)) * (x1 ** 2)) + (x1 * x2) + ((-4 + (4*(x2 ** 2))) * x2)
-	
+
 	return ans
 
 
@@ -145,42 +142,18 @@ def evolve(population):
 
 if __name__ == "__main__":
 
+
 	p = generate_population(POP_SIZE)
 	p = evolve(p)
 
-	for x in xrange(1,5):
-		p = evolve(p)
-		print BEST_FITNESS
-
-	'''
-
-	control = 0
-	tempFit = BEST_FITNESS
-
-	while control < 6:
-
+	for x in xrange(1,10):
 		p = evolve(p)
 
-		if tempFit == BEST_FITNESS:
-			control += 1
-		else:
-			control = 0
-
-		print BEST_X
-
-	'''
 
 
+	print get_x1_and_x2(BEST_X)
+	print BEST_FITNESS
 
-
-
-
-
-
-
-
-
-	
 
 
 
