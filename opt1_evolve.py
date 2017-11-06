@@ -10,8 +10,8 @@ import struct
 #
 # Global variables
 
-INDIVIDUAL_LENGHT = 16 #number of bites to represent the individual.
-POP_SIZE = 5000 #number of individuals in the pop.
+INDIVIDUAL_LENGHT = 32 #number of bites to represent the individual.
+POP_SIZE = 10000 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
@@ -29,7 +29,7 @@ def individual():
 	
 	temp = ''
 	for x in xrange(INDIVIDUAL_LENGHT):
-    	temp += str(randint(0,1))
+		temp += str(randint(0,1))
 	
 	return temp
 
@@ -44,6 +44,20 @@ def bin_to_float(binary):
 	i = int(binary, 2)
 	return struct.unpack('f', struct.pack('I', i))[0]
 
+#receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2) 
+def get_x1_and_x2(binary, n_decimal):
+	x1 = binary[:(len(binary)/2)]
+	x1f = x1[-n_decimal:]
+	x1 = x1[:-n_decimal]
+	f1 = float(int(x1, 2)) + ((float(int(x1f, 2)))/10)
+
+	x2 = binary[(len(binary)/2):]
+	x2f = x2[-n_decimal:]
+	x2 = x2[:-n_decimal]
+	f2 = float(int(x2, 2)) + ((float(int(x2f, 2)))/10)
+
+	return (f1, f2)
+
 
 #
 # GA functions
@@ -52,27 +66,28 @@ def generate_population(population_size):
 	return [ individual() for x in xrange(population_size) ]
 
 def calculate_fitness(individual):
-	return int(individual, 2) ** 2 # x^2 -> here goes the function to optimize 
+	#x = int(individual, 2)
+	x = bin_to_float(individual)
+	return -(x ** 2) + (8 * x) + 7 # x^2 -> here goes the function to optimize 
 
-def calculate_average_fitness(population):
-	fitness_sum =  reduce(add, (calculate_fitness(x) for x in population), 0)
-	return fitness_sum / (len(population) * 1.0)
+#def calculate_average_fitness(population):
+#	fitness_sum =  reduce(add, (calculate_fitness(x) for x in population), 0)
+#	return (fitness_sum / (len(population) * 1.0))
 
 def evolve(population):
 	global BEST_FITNESS 
 	global BEST_X
 
 	graded = [ (calculate_fitness(x), x) for x in population]
-
 	sorted_graded = sorted(graded)
+
 
 	#always keeps traks of the best result to the fitness function.
 	pop_leader = sorted_graded[-1]
 
-	if pop_leader[0] > BEST_FITNESS:
+	if pop_leader[0] > BEST_FITNESS: # change that if necessary
 		BEST_FITNESS = pop_leader[0]
-		BEST_X = int(pop_leader[1], 2)
-
+		BEST_X = bin_to_float(pop_leader[1])
 
 
 	graded = [ x[1] for x in sorted_graded]
@@ -113,16 +128,16 @@ def evolve(population):
 
 
 if __name__ == "__main__":
-	i = int('01000000001110000101000111101100', 2)
-	f = struct.unpack('f', struct.pack('I', i))[0]
-
-
-
+	
 	p = generate_population(POP_SIZE)
-	p = evolve(p)
+	print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
 
-	#print BEST_X
-	#print BEST_FITNESS
+	for x in xrange(1,50):
+		p = evolve(p)
+		print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
+
+	
+
 
 
 
