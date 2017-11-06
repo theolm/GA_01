@@ -143,7 +143,7 @@ if __name__ == "__main__":
 		print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
 		lst_best_x.append(BEST_X)
 		lst_best_fitness.append(BEST_FITNESS)
-	"""
+	
 	plt.plot(lst_best_x)
 	plt.axis([0,50,0,4.5])
 	plt.show()
@@ -151,5 +151,5 @@ if __name__ == "__main__":
 	plt.plot(lst_best_fitness)
 	plt.axis([0,50,0,24])
 	plt.show()
-	"""
+
 	# you can uncomment to see the graphs
