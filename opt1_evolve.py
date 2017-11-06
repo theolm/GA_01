@@ -3,6 +3,8 @@ Copyright (c) 2017 Theodoro L. Mota
 """
 
 from random import randint, random, shuffle
+from math import sin
+from scipy.integrate import quad
 from operator import add
 from functools import reduce
 import struct
@@ -11,10 +13,12 @@ import struct
 # Global variables
 
 INDIVIDUAL_LENGHT = 32 #number of bites to represent the individual.
-POP_SIZE = 10000 #number of individuals in the pop.
+POP_SIZE = 5000 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
+
+PI = 3.141592 # Pi
 
 BEST_X = 0
 BEST_FITNESS = 0
@@ -58,17 +62,21 @@ def get_x1_and_x2(binary, n_decimal):
 
 	return (f1, f2)
 
+def integrand(x): 
+	m = 10 # value defined in the function
+	print x
+	ans = sin(x) * (sin((x ** 2)/ PI) ** (2 * 4)) # missing the i
+	return ans
+
 
 #
 # GA functions
-
 def generate_population(population_size):
 	return [ individual() for x in xrange(population_size) ]
 
 def calculate_fitness(individual):
-	#x = int(individual, 2)
-	x = bin_to_float(individual)
-	return -(x ** 2) + (8 * x) + 7 # x^2 -> here goes the function to optimize 
+	ans, err = quad(integrand, 0, PI)
+	return -ans # x^2 -> here goes the function to optimize 
 
 #def calculate_average_fitness(population):
 #	fitness_sum =  reduce(add, (calculate_fitness(x) for x in population), 0)
@@ -128,11 +136,13 @@ def evolve(population):
 
 
 if __name__ == "__main__":
+
+	print sin(90)
 	
 	p = generate_population(POP_SIZE)
 	print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
 
-	for x in xrange(1,50):
+	for x in xrange(1,10):
 		p = evolve(p)
 		print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
 
