@@ -20,8 +20,8 @@ MUTATE = 0.01 #percentage of individuals to mutate.
 
 PI = 3.141592 # Pi
 
-BEST_X = 0
-BEST_FITNESS = 0
+BEST_X = None
+BEST_FITNESS = None
 
 
 
@@ -74,12 +74,10 @@ def calculate_fitness(individual):
 	
 	ans = 0
 
-	for i in xrange(1,10):
+	for i in xrange(1,6):
 		ans = ans + (sin(x) * (sin((i*(x ** 2))/ PI) ** (2 * m)))
 
-	print ans
-
-	return -ans # x^2 -> here goes the function to optimize 
+	return -ans
 
 #def calculate_average_fitness(population):
 #	fitness_sum =  reduce(add, (calculate_fitness(x) for x in population), 0)
@@ -92,23 +90,25 @@ def evolve(population):
 	graded = [ (calculate_fitness(x), x) for x in population]
 	sorted_graded = sorted(graded)
 
+	#always keeps traks of the best result to the fitness function. in this case the lower fitness
+	pop_leader = sorted_graded[0]
 
-	#always keeps traks of the best result to the fitness function.
-	pop_leader = sorted_graded[-1]
-
-	if pop_leader[0] > BEST_FITNESS: # change that if necessary
+	if BEST_X is None:
 		BEST_FITNESS = pop_leader[0]
-		BEST_X = bin_to_float(pop_leader[1])
+		BEST_X = pop_leader[1]
+
+	if pop_leader[0] < BEST_FITNESS: # change that if necessary
+		BEST_FITNESS = pop_leader[0]
+		BEST_X = pop_leader[1]
 
 
 	graded = [ x[1] for x in sorted_graded]
 
-
 	retain_length = int(len(graded)*SELECTED)
-	parents = graded[-retain_length:] #pick X% of the best in the population
+	parents = graded[:retain_length] #pick X% of the best in the population
 
 	#add shitty individuals to escape max locals.
-	for individual in graded[:-retain_length]:
+	for individual in graded[retain_length:]:
 		if RANDOM_IND > random():
 			parents.append(individual)
 
@@ -142,7 +142,13 @@ def evolve(population):
 if __name__ == "__main__":
 
 	p = generate_population(POP_SIZE)
-	p = evolve(p)
+
+	for x in xrange(1,10):
+		p = evolve(p)
+		print 'best x:' + str(int(BEST_X, 2)) + ' fitness: ' + str(2*BEST_FITNESS) #why /2!!!?!?!?!?!?
+
+
+		
 
 	'''
 
