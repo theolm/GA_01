@@ -12,8 +12,8 @@ import struct
 #
 # Global variables
 
-INDIVIDUAL_LENGHT = 32 #number of bites to represent the individual.
-POP_SIZE = 5000 #number of individuals in the pop.
+INDIVIDUAL_LENGHT = 15 #number of bites to represent the individual.
+POP_SIZE = 200 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
@@ -62,20 +62,23 @@ def get_x1_and_x2(binary, n_decimal):
 
 	return (f1, f2)
 
-def integrand(x): 
-	m = 10 # value defined in the function
-	print x
-	ans = sin(x) * (sin((x ** 2)/ PI) ** (2 * 4)) # missing the i
-	return ans
-
-
 #
 # GA functions
 def generate_population(population_size):
 	return [ individual() for x in xrange(population_size) ]
 
 def calculate_fitness(individual):
-	ans, err = quad(integrand, 0, PI)
+	x = int(individual,2)
+	x = float(x)/10000
+	m = 10
+	
+	ans = 0
+
+	for i in xrange(1,10):
+		ans = ans + (sin(x) * (sin((i*(x ** 2))/ PI) ** (2 * m)))
+
+	print ans
+
 	return -ans # x^2 -> here goes the function to optimize 
 
 #def calculate_average_fitness(population):
@@ -104,7 +107,7 @@ def evolve(population):
 	retain_length = int(len(graded)*SELECTED)
 	parents = graded[-retain_length:] #pick X% of the best in the population
 
-	#add shity individuals to escape max locals.
+	#add shitty individuals to escape max locals.
 	for individual in graded[:-retain_length]:
 		if RANDOM_IND > random():
 			parents.append(individual)
@@ -125,7 +128,8 @@ def evolve(population):
 		if male != female:
 			male = parents[male]
 			female = parents[female]
-			child = male[:INDIVIDUAL_LENGHT] + female[INDIVIDUAL_LENGHT:]
+			half = len(male) / 2
+			child = male[:half] + female[half:]
 			offsprings.append(child)
 
 	parents.extend(offsprings)
@@ -137,14 +141,18 @@ def evolve(population):
 
 if __name__ == "__main__":
 
-	print sin(90)
-	
 	p = generate_population(POP_SIZE)
+	p = evolve(p)
+
+	'''
+
 	print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
 
 	for x in xrange(1,10):
 		p = evolve(p)
 		print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
+	'''
+
 
 	
 
