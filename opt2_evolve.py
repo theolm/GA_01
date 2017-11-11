@@ -30,23 +30,41 @@ PI = 3.141592 # Pi
 BEST_X = None
 BEST_FITNESS = None
 
-
+BITS32 = 2 ** 32
+BITS16 = 2 ** 16 
 
 #
 # Helper functions
+"""
+change_bit: individual -> string of bits
+ 			i -> random position of the string of bits
+
+change_bit: receives an individual and a index of a random position
+			then change that respective random bit.
+"""
+def change_bit(individual,i):
+	if individual[i] == '1':
+		individual[i] = '0'
+	elif individual[i] == '0':
+		individual[i] = '1'
+	return individual
 
 def individual():
 	"Create a individual"
-	
+
 	temp = ''
 	for x in xrange(INDIVIDUAL_LENGHT):
 		temp += str(randint(0,1))
-	
+
 	return temp
 
 def mutate_individual(individual):
 	l = list(individual)
-	shuffle(l)
+
+	random_position = randint(0,len(l)-1)
+	#shuffle(l)
+	l = change_bit(l,random_position)
+
 
 	return ''.join(l)
 
@@ -55,7 +73,7 @@ def bin_to_float(binary):
 	i = int(binary, 2)
 	return struct.unpack('f', struct.pack('I', i))[0]
 
-#receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2) 
+#receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2)
 def get_x1_and_x2(binary):
 	bin1 = binary[:(len(binary)/2)]
 	bin2 = binary[(len(binary)/2):]
@@ -83,7 +101,7 @@ def calculate_fitness(individual):
 
 
 def evolve(population):
-	global BEST_FITNESS 
+	global BEST_FITNESS
 	global BEST_X
 
 	graded = [ (calculate_fitness(x), x) for x in population]
@@ -148,15 +166,5 @@ if __name__ == "__main__":
 
 	for x in xrange(1,10):
 		p = evolve(p)
-
-
-
 	print get_x1_and_x2(BEST_X)
 	print BEST_FITNESS
-
-
-
-
-
-	
-
