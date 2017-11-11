@@ -1,5 +1,6 @@
 """
 Copyright (c) 2017 Theodoro L. Mota
+					& Vilmar Neto
 """
 
 from random import randint, random, shuffle
@@ -31,7 +32,7 @@ BEST_X = None
 BEST_FITNESS = None
 
 BITS32 = 2 ** 32
-BITS16 = 2 ** 16 
+BITS16 = 2 ** 16
 
 #
 # Helper functions
@@ -48,16 +49,25 @@ def change_bit(individual,i):
 	elif individual[i] == '0':
 		individual[i] = '1'
 	return individual
+"""
+individual -> string with 0's & 1's (bits)
 
+individual: creates a individual, composed by 0's & 1's.
+"""
 def individual():
-	"Create a individual"
+
 
 	temp = ''
 	for x in xrange(INDIVIDUAL_LENGHT):
 		temp += str(randint(0,1))
 
 	return temp
+"""
+mutate_individual -> individual
 
+mutate_individual: receive an individual then change a random bit
+				   in its content.
+"""
 def mutate_individual(individual):
 	l = list(individual)
 
