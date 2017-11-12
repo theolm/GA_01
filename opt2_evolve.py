@@ -19,11 +19,12 @@ import struct
 #
 # Global variables
 
-INDIVIDUAL_LENGHT = 32 #number of bites to represent the individual.
-POP_SIZE = 500 #number of individuals in the pop.
+INDIVIDUAL_LENGHT = 30 #number of bites to represent the individual.
+POP_SIZE = 100 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
+MUTATE_FACTOR = 0.6 #chance to change a bit in the mutation
 
 PI = 3.141592 # Pi
 
@@ -46,25 +47,33 @@ def individual():
 
 def mutate_individual(individual):
 	l = list(individual)
-	shuffle(l)
+
+	for x in xrange(len(l)):
+		if random() < MUTATE_FACTOR:
+			if l[x] == '0':
+				l[x] = '1'
+			else:
+				l[x] = '0'
+
 
 	return ''.join(l)
 
-#should receive a 32 bit string and returns a float number
-def bin_to_float(binary):
-	i = int(binary, 2)
-	return struct.unpack('f', struct.pack('I', i))[0]
 
 #receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2) 
-def get_x1_and_x2(binary):
-	bin1 = binary[:(len(binary)/2)]
-	bin2 = binary[(len(binary)/2):]
+def convert_to_x1_and_x2(binary):
 
-	x1 = float(int(bin1,2) -1 - 32767)/10000
-	x2 = float(int(bin2,2) -1 - 32767)/10000
+	ind_size = INDIVIDUAL_LENGHT/2
 
-	pair = (x1,x2)
-	return pair
+	x1_decimal = int(binary[:ind_size], 2)
+	x2_decimal = int(binary[ind_size:], 2)
+
+	divider = (2**ind_size) - 1
+	
+
+	x1 = -3.0 + x1_decimal * (6.0/divider)
+	x2 = -2.0 + x2_decimal * (4.0/divider)
+
+	return (x1,x2)
 
 
 #
@@ -73,11 +82,11 @@ def generate_population(population_size):
 	return [ individual() for x in xrange(population_size) ]
 
 def calculate_fitness(individual):
-	xx = get_x1_and_x2(individual)
+	xx = convert_to_x1_and_x2(individual)
 	x1 = xx[0]
 	x2 = xx[1]
 
-	ans = ((4 - (2.1 * (x1 ** 2)) + ((x1 ** 4)/3)) * (x1 ** 2)) + (x1 * x2) + ((-4 + (4*(x2 ** 2))) * x2)
+	ans = (4 - 2.1*(x1*x1) + (x1*x1*x1*x1)/3.0)*(x1*x1) + x1*x2 + (-4 + 4*(x2*x2))*(x2*x2)
 
 	return ans
 
@@ -142,17 +151,18 @@ def evolve(population):
 
 if __name__ == "__main__":
 
-
+		
 	p = generate_population(POP_SIZE)
 	p = evolve(p)
 
-	for x in xrange(1,10):
+	for x in xrange(1,4000):
 		p = evolve(p)
 
 
 
-	print get_x1_and_x2(BEST_X)
+	print convert_to_x1_and_x2(BEST_X)
 	print BEST_FITNESS
+
 
 
 
