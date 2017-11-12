@@ -155,9 +155,15 @@ if __name__ == "__main__":
 	p = generate_population(POP_SIZE)
 	p = evolve(p)
 
-	for x in xrange(1,4000):
+	temp_best = BEST_FITNESS
+	count = 0
+	while (count < 200):
 		p = evolve(p)
-
+		if BEST_FITNESS != temp_best:
+			temp_best = BEST_FITNESS
+			count = 0
+		count +=1
+		print count
 
 
 	print convert_to_x1_and_x2(BEST_X)
