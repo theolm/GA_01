@@ -17,6 +17,7 @@ POP_SIZE = 100 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
+MUTATE_FACTOR = 0.6 #chance to change a bit in the mutation
 
 PI = 3.141592 # Pi
 
@@ -39,7 +40,14 @@ def individual():
 
 def mutate_individual(individual):
 	l = list(individual)
-	shuffle(l)
+
+	for x in xrange(len(l)):
+		if random() < MUTATE_FACTOR:
+			if l[x] == '0':
+				l[x] = '1'
+			else:
+				l[x] = '0'
+
 
 	return ''.join(l)
 
@@ -60,16 +68,14 @@ def generate_population(population_size):
 	return [ individual() for x in xrange(population_size) ]
 
 def calculate_fitness(individual):
-	x = int(individual,2)
-	x = float(x)/10000
+	x = convert_to_x(individual)
 	m = 10
-	
 	ans = 0
 
 	for i in xrange(1,6):
-		ans = ans + (sin(x) * (sin((i*(x ** 2))/ PI) ** (2 * m)))
+		ans = ans + ((sin(x) * (sin((i*(x ** 2))/ PI) ** (2 * m))) * -1)
 
-	return -ans
+	return ans
 
 #def calculate_average_fitness(population):
 #	fitness_sum =  reduce(add, (calculate_fitness(x) for x in population), 0)
@@ -107,9 +113,9 @@ def evolve(population):
 			parents.append(individual)
 
 	#mutate some the shit out of the parents
-	for individual in xrange(len(parents)):
-		if MUTATE > random():
-			parents[individual] = mutate_individual(parents[individual])
+	#for individual in xrange(len(parents)):
+	#	if MUTATE > random():
+	#		parents[individual] = mutate_individual(parents[individual])
 
 
 	parents_length = len(parents)
@@ -127,31 +133,32 @@ def evolve(population):
 			offsprings.append(child)
 
 	parents.extend(offsprings)
-	return parents
+
+	p = []
+
+	#mutate 1% of the new gen
+	for individual in xrange(len(parents)):
+		mut = parents[individual]
+		if 0.01 > random():
+			mut = mutate_individual(mut)
+
+		p.append(mut)
+		
+	return p
 
 # functions to implement:
 # average_fitness - determine the average fitness of the pop.
 
 
 if __name__ == "__main__":
-
-	zero = '000000000000000'
-	pi = '111111111111111'
-
-	print convert_to_x(zero)
-	print convert_to_x(pi)
-
-
-		
-
-	'''
+	
+	p = generate_population(POP_SIZE)
 
 	print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
 
-	for x in xrange(1,10):
+	for x in xrange(1,6000):
 		p = evolve(p)
-		print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
-	'''
+		print 'best x:' + str(convert_to_x(BEST_X)) + ' fitness: ' + str(BEST_FITNESS)
 
 
 	
