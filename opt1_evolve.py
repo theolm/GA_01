@@ -13,7 +13,7 @@ import struct
 # Global variables
 
 INDIVIDUAL_LENGHT = 15 #number of bites to represent the individual.
-POP_SIZE = 200 #number of individuals in the pop.
+POP_SIZE = 100 #number of individuals in the pop.
 SELECTED = 0.2 #percentage of selected individuals.
 RANDOM_IND = 0.05 #percentage of random individuals to include as parent. may have shit fitness.
 MUTATE = 0.01 #percentage of individuals to mutate.
@@ -48,19 +48,11 @@ def bin_to_float(binary):
 	i = int(binary, 2)
 	return struct.unpack('f', struct.pack('I', i))[0]
 
-#receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2) 
-def get_x1_and_x2(binary, n_decimal):
-	x1 = binary[:(len(binary)/2)]
-	x1f = x1[-n_decimal:]
-	x1 = x1[:-n_decimal]
-	f1 = float(int(x1, 2)) + ((float(int(x1f, 2)))/10)
-
-	x2 = binary[(len(binary)/2):]
-	x2f = x2[-n_decimal:]
-	x2 = x2[:-n_decimal]
-	f2 = float(int(x2, 2)) + ((float(int(x2f, 2)))/10)
-
-	return (f1, f2)
+#receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2)
+def convert_to_x(binary):
+	x_decimal = int(binary, 2)
+	x = x_decimal * (PI/(2**len(binary) - 1))
+	return x
 
 #
 # GA functions
@@ -95,10 +87,12 @@ def evolve(population):
 
 	if BEST_X is None:
 		BEST_FITNESS = pop_leader[0]
+		print(BEST_FITNESS)
 		BEST_X = pop_leader[1]
 
 	if pop_leader[0] < BEST_FITNESS: # change that if necessary
 		BEST_FITNESS = pop_leader[0]
+		print(BEST_FITNESS)
 		BEST_X = pop_leader[1]
 
 
@@ -141,11 +135,11 @@ def evolve(population):
 
 if __name__ == "__main__":
 
-	p = generate_population(POP_SIZE)
+	zero = '000000000000000'
+	pi = '111111111111111'
 
-	for x in xrange(1,10):
-		p = evolve(p)
-		print 'best x:' + str(int(BEST_X, 2)) + ' fitness: ' + str(2*BEST_FITNESS) #why /2!!!?!?!?!?!?
+	print convert_to_x(zero)
+	print convert_to_x(pi)
 
 
 		
