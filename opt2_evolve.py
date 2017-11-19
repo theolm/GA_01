@@ -1,7 +1,7 @@
 """
 Copyright (c) 2017 Theodoro L. Mota
 """
-
+import matplotlib.pyplot as plt
 from random import randint, random, shuffle
 from math import sin
 from scipy.integrate import quad
@@ -38,11 +38,11 @@ BEST_FITNESS = None
 
 def individual():
 	"Create a individual"
-	
+
 	temp = ''
 	for x in xrange(INDIVIDUAL_LENGHT):
 		temp += str(randint(0,1))
-	
+
 	return temp
 
 def mutate_individual(individual):
@@ -59,7 +59,7 @@ def mutate_individual(individual):
 	return ''.join(l)
 
 
-#receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2) 
+#receive a X bits string and a number indicate the size of the decimal part and return a pair of float (x1, x2)
 def convert_to_x1_and_x2(binary):
 
 	ind_size = INDIVIDUAL_LENGHT/2
@@ -68,7 +68,7 @@ def convert_to_x1_and_x2(binary):
 	x2_decimal = int(binary[ind_size:], 2)
 
 	divider = (2**ind_size) - 1
-	
+
 
 	x1 = -3.0 + x1_decimal * (6.0/divider)
 	x2 = -2.0 + x2_decimal * (4.0/divider)
@@ -92,7 +92,7 @@ def calculate_fitness(individual):
 
 
 def evolve(population):
-	global BEST_FITNESS 
+	global BEST_FITNESS
 	global BEST_X
 
 	graded = [ (calculate_fitness(x), x) for x in population]
@@ -151,9 +151,13 @@ def evolve(population):
 
 if __name__ == "__main__":
 
-		
+
 	p = generate_population(POP_SIZE)
 	p = evolve(p)
+
+	lst_bestxs = []
+
+	lst_best_fitness = []
 
 	temp_best = BEST_FITNESS
 	count = 0
@@ -162,17 +166,22 @@ if __name__ == "__main__":
 		if BEST_FITNESS != temp_best:
 			temp_best = BEST_FITNESS
 			count = 0
+		lst_bestxs.append(convert_to_x1_and_x2(BEST_X))
+		lst_best_fitness.append(BEST_FITNESS)
+
 		count +=1
-		print count
+
+
 
 
 	print convert_to_x1_and_x2(BEST_X)
 	print BEST_FITNESS
 
+	plt.plot(lst_bestxs)
+	plt.axis([0,200,- 1, 1])
+	plt.show()
 
 
-
-
-
-	
-
+	plt.plot(lst_best_fitness)
+	plt.axis([0,200,- 1.5, 0])
+	plt.show()

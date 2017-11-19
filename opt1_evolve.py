@@ -1,7 +1,7 @@
 """
 Copyright (c) 2017 Theodoro L. Mota
 """
-
+import matplotlib.pyplot as plt
 from random import randint, random, shuffle
 from math import sin
 from scipy.integrate import quad
@@ -31,11 +31,11 @@ BEST_FITNESS = None
 
 def individual():
 	"Create a individual"
-	
+
 	temp = ''
 	for x in xrange(INDIVIDUAL_LENGHT):
 		temp += str(randint(0,1))
-	
+
 	return temp
 
 def mutate_individual(individual):
@@ -82,7 +82,7 @@ def calculate_fitness(individual):
 #	return (fitness_sum / (len(population) * 1.0))
 
 def evolve(population):
-	global BEST_FITNESS 
+	global BEST_FITNESS
 	global BEST_X
 
 	graded = [ (calculate_fitness(x), x) for x in population]
@@ -93,12 +93,12 @@ def evolve(population):
 
 	if BEST_X is None:
 		BEST_FITNESS = pop_leader[0]
-		print(BEST_FITNESS)
+
 		BEST_X = pop_leader[1]
 
 	if pop_leader[0] < BEST_FITNESS: # change that if necessary
 		BEST_FITNESS = pop_leader[0]
-		print(BEST_FITNESS)
+
 		BEST_X = pop_leader[1]
 
 
@@ -143,7 +143,7 @@ def evolve(population):
 			mut = mutate_individual(mut)
 
 		p.append(mut)
-		
+
 	return p
 
 # functions to implement:
@@ -151,20 +151,32 @@ def evolve(population):
 
 
 if __name__ == "__main__":
-	
+
 	p = generate_population(POP_SIZE)
+
+	lst_best_x = []
+
+ 	lst_best_fitness = []
+
 
 	print 'best x:' + str(BEST_X) + ' fitness: ' + str(BEST_FITNESS)
 
 	for x in xrange(1,6000):
 		p = evolve(p)
+		lst_best_x.append(convert_to_x(BEST_X))
+		lst_best_fitness.append(BEST_FITNESS)
 		print 'best x:' + str(convert_to_x(BEST_X)) + ' fitness: ' + str(BEST_FITNESS)
 
 
-	
 
+	plt.plot(lst_best_x)
+	sup_limit = max(lst_best_x)
+	inf_limit = min(lst_best_x)
+	plt.axis([0,6000,inf_limit - 0.0001,sup_limit + 0.0001])
+	plt.show()
 
-
-
-	
-
+	plt.plot(lst_best_fitness)
+	sup_limitf= max(lst_best_fitness)
+	inf_limitf = min(lst_best_fitness)
+	plt.axis([0,6000,inf_limitf - 0.01,sup_limitf + 0.01])
+	plt.show()
